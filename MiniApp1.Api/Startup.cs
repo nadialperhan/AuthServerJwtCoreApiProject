@@ -6,11 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Sharedlayer.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Sharedlayer.Extensions;
 namespace MiniApp1.Api
 {
     public class Startup
@@ -25,7 +26,10 @@ namespace MiniApp1.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CustomTokenOptions>(Configuration.GetSection("TokenOption"));
+            var tokenoptions = Configuration.GetSection("TokenOption").Get<CustomTokenOptions>();
 
+            services.JwtBearerConfiguration(tokenoptions);
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -44,7 +48,7 @@ namespace MiniApp1.Api
             }
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
