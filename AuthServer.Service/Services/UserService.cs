@@ -1,6 +1,7 @@
 ﻿using AuthServer.Core.DTOs;
 using AuthServer.Core.Entity;
 using AuthServer.Core.Service;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Sharedlayer.Dto;
 using System;
@@ -14,14 +15,22 @@ namespace AuthServer.Service.Services
     public class UserService : IUserService
     {
         private readonly UserManager<AppUser> _userManager;
-
-        public UserService(UserManager<AppUser> userManager)
+        private readonly IValidator<CreateUserDto> _validator;
+        public UserService(UserManager<AppUser> userManager, IValidator<CreateUserDto> validator)
         {
             _userManager = userManager;
+            _validator = validator;
         }
 
         public async Task<Response<UserAppDto>> CreateUserAsync(CreateUserDto createUserDto)
         {
+
+            var valresult = _validator.Validate(createUserDto);
+            if (!valresult.IsValid)
+            {
+                var errors = valresult.Errors.Select(x => x.ErrorMessage).ToList();
+                return Response<UserAppDto>.Fail(new ErrorDto(errors, true), 400);
+            }
             var user = new AppUser()
             {
                 Email = createUserDto.Email,

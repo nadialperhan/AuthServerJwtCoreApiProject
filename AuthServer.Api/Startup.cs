@@ -1,4 +1,5 @@
 using AuthServer.Core.Configuration;
+using AuthServer.Core.DTOs;
 using AuthServer.Core.Entity;
 using AuthServer.Core.Repositories;
 using AuthServer.Core.Service;
@@ -6,6 +7,8 @@ using AuthServer.Core.UnitOfWork;
 using AuthServer.Data;
 using AuthServer.Data.Repositories;
 using AuthServer.Service.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,10 +21,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Sharedlayer.Configurations;
+using Sharedlayer.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuthServer.Api.Validation;
+using System.Reflection;
 
 namespace AuthServer.Api
 {
@@ -45,6 +51,9 @@ namespace AuthServer.Api
             services.AddScoped(typeof(IServiceGeneric<,>), typeof(ServiceGeneric<,>));
 
             services.AddScoped<IUnitOfWork, UnitofWork>();
+            //services.AddSingleton<IValidator<CreateUserDto>, CreateUserValidator>();
+
+            services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
 
             services.AddDbContext<AppDbContext>(options =>
             {
@@ -58,7 +67,7 @@ namespace AuthServer.Api
             services.AddIdentity<AppUser, IdentityRole>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
-                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireNonAlphanumeric = true;
 
             }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
             //AddDefaultTokenProviders şifre sıfırlama gibi işlemlerde token üretiyorum bunu üretebilmek için AddDefaultTokenProviders
@@ -91,8 +100,14 @@ namespace AuthServer.Api
                 };
             });
 
-
             services.AddControllers();
+            //    .AddFluentValidation(opt=> {
+            //    opt.RegisterValidatorsFromAssemblyContaining<Startup>();
+            //    opt.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+            //});
+            //services.UseCustomValidationResponse();
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AuthServer.Api", Version = "v1" });
