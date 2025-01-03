@@ -24,6 +24,7 @@ namespace AuthServer.Service.Services
 
         public async Task<Response<UserAppDto>> CreateUserAsync(CreateUserDto createUserDto)
         {
+           
 
             var valresult = _validator.Validate(createUserDto);
             if (!valresult.IsValid)
@@ -47,6 +48,7 @@ namespace AuthServer.Service.Services
 
         public async Task<Response<UserAppDto>> GetUserByName(string userName)
         {
+            
             var user = await _userManager.FindByNameAsync(userName);
             if (user==null)
             {

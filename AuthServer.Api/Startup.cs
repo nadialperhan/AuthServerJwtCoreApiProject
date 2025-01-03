@@ -123,6 +123,7 @@ namespace AuthServer.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthServer.Api v1"));
             }
+            app.UseCustomException();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();

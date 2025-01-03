@@ -15,7 +15,7 @@ namespace Sharedlayer.Dto
         public ErrorDto(string error,bool isshow)
         {
             Errors.Add(error);
-            isshow = true;
+            IsShow = isshow;
         }
         public ErrorDto(List<string> errors,bool isshow)
         {
