@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sharedlayer.Extensions;
+using MiniApp1.Api.Requirement;
+using Microsoft.AspNetCore.Authorization;
+
 namespace MiniApp1.Api
 {
     public class Startup
@@ -30,6 +33,20 @@ namespace MiniApp1.Api
             var tokenoptions = Configuration.GetSection("TokenOption").Get<CustomTokenOptions>();
 
             services.JwtBearerConfiguration(tokenoptions);
+            services.AddSingleton<IAuthorizationHandler, BirthDayRequirementHandler>();
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("AmasyaPolicy", policy =>
+                {
+                    policy.RequireClaim("city", "amasya");
+                });
+
+                opt.AddPolicy("AgePolicy", policy =>
+                {
+                    policy.Requirements.Add(new BirthDayRequirement(18));
+                });
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

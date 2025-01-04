@@ -43,7 +43,9 @@ namespace AuthServer.Service.Services
                 new Claim(ClaimTypes.NameIdentifier,appUser.Id),
                 new Claim(JwtRegisteredClaimNames.Email,appUser.Email),
                 new Claim(ClaimTypes.Name,appUser.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                new Claim("city",appUser.City),
+                new Claim("birth-date",appUser.BirthDay.ToShortDateString())
             };
             userlist.AddRange(audience.Select(x => new Claim(JwtRegisteredClaimNames.Aud, x)));
             userlist.AddRange(userroles.Select(x => new Claim(ClaimTypes.Role, x)));

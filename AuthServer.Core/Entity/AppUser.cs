@@ -10,5 +10,6 @@ namespace AuthServer.Core.Entity
     public class AppUser:IdentityUser
     {
         public string City { get; set; }
+        public DateTime BirthDay { get; set; }
     }
 }
