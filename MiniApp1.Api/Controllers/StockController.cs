@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MiniApp1.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="admin,admin2")]
     [Route("api/[controller]")]
     [ApiController]
     public class StockController : ControllerBase
